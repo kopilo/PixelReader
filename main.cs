@@ -15,8 +15,13 @@ namespace blackpixlesToList
 
 			Image iin = Image.FromFile (args [0]);
 			string sout = readPixels (iin);
-			Console.WriteLine (sout);
-			FileStream fs = new FileStream (args[1], FileMode.Create);
+			Console.WriteLine (sout + "\n press any key to continue...");
+			Console.ReadKey ();
+		}
+
+		static public void fileOut(string sout,string filename)
+		{
+			FileStream fs = new FileStream (filename, FileMode.Create);
 			try {
 				StreamWriter SW = new StreamWriter(fs);
 				try{
@@ -29,20 +34,44 @@ namespace blackpixlesToList
 			finally{
 				fs.Close();
 			}
-
-			Console.ReadKey ();
-			
 		}
-
 		static public string readPixels(Image img) {
 			string cout ="";
 			Bitmap pixs = new Bitmap(img);
 			for(int i = 0; i < img.Width; i++){
 				for(int j = 0; j < img.Height; j++){
-					//Console.WriteLine(i +","+ j + "::" + pixs.GetPixel (i,j));
-					// 20 is an arbitrary value and subject to your opinion and need.
-					if(pixs.GetPixel(i,j) == Color.FromArgb(255,0,0,0)) {
-						cout += i + "," + j + '\n';
+					//convert to 2bit pixels.
+					Color colour = pixs.GetPixel(i,j);
+					//check is not trasnparent
+					if(colour.A > 128) {
+						//add pixel position to array
+						cout += i + "," + j + ":";
+						//append colour
+						if(colour.R >= 128 && colour.G >= 128 && colour.B >= 128) {
+							cout += "white";
+						}
+						else if(colour.R < 128 && colour.G < 128 && colour.B < 128) {
+							cout +="black";
+						}
+						else if(colour.R >= 128 && colour.G < 128 && colour.B < 128) {
+							cout += "red";
+						}
+						else if(colour.R < 128 && colour.G >= 128 && colour.B < 128) {
+							cout += "green";
+						}
+						else if(colour.R < 128 && colour.G < 128 && colour.B >= 128) {
+							cout += "blue";
+						}
+						else if(colour.R >= 128 && colour.G >= 128 && colour.B < 128) {
+							cout += "yellow";
+						}
+						else if(colour.R >= 128 && colour.G < 128 && colour.B >= 128) {
+							cout += "purple";
+						}
+						else if (colour.R < 128 && colour.G >= 128 && colour.B >= 128) {
+							cout += "cyan";
+						}
+						cout += '\n';
 					}
 				}
 			}
